@@ -1,7 +1,3 @@
-// Body Parser
-var bodyParser = require("body-parser");
-var urlEncodedParser = bodyParser.urlencoded({ extended: false });
-
 // Import Models
 var model = require("../model/Todo");
 // Model
@@ -21,13 +17,26 @@ module.exports = (app, prefix) => {
     // * Add a new todo
     app.post(`${prefix}/todo`, (request, response) => {
         // Validation
-        if (!request.body) return response.status(422).send('item is required');
-        if (!request.body.item) return response.status(422).send('item is required');
+        if (!request.body) return response.status(422).send("item is required");
+        if (!request.body.item)
+            return response.status(422).send("item is required");
         // create new todo
         Todo(request.body).save((err) => {
             if (err) throw err;
             console.log("item saved");
         });
-        return response.status(201).send('Item saved');
+        return response.status(201).json({ message: "Item saved" });
+    });
+
+    // * Remove from todo
+    app.delete(`${prefix}/todo/:id`, (request, response) => {
+        // Validation
+        if (!request.params.id)
+            return response.status(422).send("item id is required");
+        // Find todo by id
+        Todo.deleteOne({ _id: request.params.id }, (err) => {
+            if (err) throw err;
+            return response.status(201).json({ message: "Item deleted !" });
+        });
     });
 };

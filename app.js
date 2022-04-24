@@ -2,8 +2,14 @@
 const express = require("express");
 
 const app = express();
-const env = require('dotenv').config({ path: __dirname + '/.env' })
-const port = process.env['PORT'];
+const env = require("dotenv").config({ path: __dirname + "/.env" });
+const port = process.env["PORT"];
+// app.use(
+//     express.urlencoded({
+//         extended: true,
+//     })
+// );
+
 app.use(express.json());
 // Access static files
 app.use(express.static("/public"));
@@ -15,7 +21,6 @@ database();
 // Use Middleware
 // var userMiddleware = require("./middleware/user");
 // app.use(userMiddleware);
-
 
 // Register Routes
 const webRoutes = require("./routes/web");

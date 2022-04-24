@@ -15,25 +15,24 @@
         <h1 class="text-lg font-bold underline text-center mb-3">Todos</h1>
         <div class="flex justify-around">
             <div>
-                <div class="flex justify-end">
-                    <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap">
-                        <button class="z-10 block p-4 text-green-700 transition-all bg-green-100 border-2 border-white rounded-full active:bg-green-50 hover:scale-110 focus:outline-none focus:ring" type="button">
-                <svg
-                  class="w-4 h-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                  />
-                </svg>
-              </button>
-                    </td>
+                <div class="flex justify-end gap-3 my-2">
+                    <input v-model="new_todo" type="text" class="w-full p-3 mt-1 text-sm border-2 border-gray-200 rounded" />
+                    <button @click.prevent="createNew()" class="z-10 block p-4 text-green-700 transition-all bg-green-100 border-2 border-white rounded-full active:bg-green-50 hover:scale-110 focus:outline-none focus:ring" type="button">
+              <svg
+                class="w-4 h-4"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                />
+              </svg>
+            </button>
                 </div>
                 <div class="overflow-hidden overflow-x-auto border border-gray-100 rounded">
                     <table class="min-w-full text-sm divide-y divide-gray-200">
@@ -41,9 +40,6 @@
                             <tr class="bg-gray-50">
                                 <th class="px-4 py-2 font-medium text-left text-gray-900 whitespace-nowrap">
                                     Event
-                                </th>
-                                <th class="px-4 py-2 font-medium text-left text-gray-900 whitespace-nowrap">
-                                    Date of Birth
                                 </th>
                                 <th class="px-4 py-2 font-medium text-left text-gray-900 whitespace-nowrap">
                                     @handle
@@ -55,40 +51,12 @@
                             <tr v-for="(list, index) in data" ::key="index">
                                 <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap">
                                     <div class="relative">
-                                        <textarea class="w-full p-3 mt-1 text-sm border-2 border-gray-200 rounded">
-{{list.item}}</textarea
-                      >
-                    </div>
-                  </td>
-                  <td class="px-4 py-2 text-gray-700 whitespace-nowrap">
-                    24/05/1995
-                  </td>
-                  <td class="px-4 py-2 text-gray-700 whitespace-nowrap">
-                    <div class="flex items-center -space-x-4 hover:space-x-1">
-                      <button
-                        class="z-20 block p-4 text-blue-700 transition-all bg-blue-100 border-2 border-white rounded-full active:bg-blue-50 hover:scale-110 focus:outline-none focus:ring"
-                        type="button"
-                      >
-                        <svg
-                          class="w-4 h-4"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                          />
-                        </svg>
-                      </button>
-
-                      <button
-                        class="z-30 block p-4 text-red-700 transition-all bg-red-100 border-2 border-white rounded-full hover:scale-110 focus:outline-none focus:ring active:bg-red-50"
-                        type="button"
-                      >
+                                        <p>{{list.item}}</p>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-2 text-gray-700 whitespace-nowrap">
+                                    <div class="flex items-center -space-x-4 hover:space-x-1">
+                                        <button @click.prevent="deleteItem(list._id)" class="z-30 block p-4 text-red-700 transition-all bg-red-100 border-2 border-white rounded-full hover:scale-110 focus:outline-none focus:ring active:bg-red-50" type="button">
                         <svg
                           class="w-4 h-4"
                           xmlns="http://www.w3.org/2000/svg"
@@ -104,43 +72,91 @@
                           />
                         </svg>
                       </button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
 
     <script>
-      Vue.createApp({
-        data() {
-          return {
-            data: [],
-          };
-        },
-        methods: {
-          // Get Data
-          async getData() {
-            await fetch("/api/v1/todo")
-              .then((response) => {
-                return response.json();
-              })
-              .then((response) => {
-                this.data = response;
-              })
-              .catch((error) => {
-                console.log("An error occurred");
-                console.log(error);
-              });
-          },
-        },
-        created() {
-          this.getData();
-        },
-      }).mount("#app");
+        Vue.createApp({
+            data() {
+                return {
+                    data: [],
+                    new_todo: "",
+                };
+            },
+            methods: {
+                // Get Data
+                async getData() {
+                    await fetch("/api/v1/todo")
+                        .then((response) => {
+                            return response.json();
+                        })
+                        .then((response) => {
+                            this.data = response;
+                        })
+                        .catch((error) => {
+                            console.log("An error occurred");
+                            console.log(error);
+                        });
+                },
+
+                // Create new
+                async createNew() {
+                    if (!this.new_todo) return alert("Field cannot be empty !");
+                    await fetch("/api/v1/todo", {
+                            method: "POST",
+                            body: JSON.stringify({
+                                item: this.new_todo,
+                            }),
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                        })
+                        .then((response) => {
+                            return response.json();
+                        })
+                        .then((response) => {
+                            this.getData();
+                            this.new_todo = "";
+                        })
+                        .catch((error) => {
+                            console.log("An error occurred");
+                            console.log(error);
+                        });
+                },
+
+                // Delete Item
+                async deleteItem(id) {
+                    if (!confirm("Are you sure you want to delete this item ?")) return;
+                    await fetch(`/api/v1/todo/${id}`, {
+                            method: "DELETE",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                        })
+                        .then((response) => {
+                            return response.json();
+                        })
+                        .then((response) => {
+                            this.getData();
+                        })
+                        .catch((error) => {
+                            console.log("An error occurred");
+                            console.log(error);
+                        });
+                },
+            },
+            created() {
+                this.getData();
+            },
+        }).mount("#app");
     </script>
-  </body>
+</body>
+
 </html>
