@@ -4,11 +4,6 @@ const express = require("express");
 const app = express();
 const env = require("dotenv").config({ path: __dirname + "/.env" });
 const port = process.env["PORT"];
-// app.use(
-//     express.urlencoded({
-//         extended: true,
-//     })
-// );
 
 app.use(express.json());
 // Access static files

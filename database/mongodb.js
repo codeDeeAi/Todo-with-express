@@ -1,13 +1,14 @@
 module.exports = () => {
+    const host = process.env["DB_HOST"] ? process.env["DB_HOST"] : "";
+    const name = process.env["DB_NAME"] ? process.env["DB_NAME"] : "";
     // Require Mongoose
     var mongoose = require("mongoose");
-
     // Connect to MongoDB
-    mongoose.connect("mongodb://localhost/netninja_todo", {
+    mongoose.connect(host, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
     });
     mongoose.connection.once("open", () => {
-        console.log("Connected to netninja_todo database");
+        console.log(`Connected to database : ${name}`);
     });
 };
